@@ -30,18 +30,6 @@ use microbit::{
     hal::spim::{MODE_0, Polarity, Phase, Mode},
 };
 
-
-fn serial_write<T>(serial: &mut Uarte<T>, buffer: &[u8]) -> () where T: microbit::hal::uarte::Instance {
-
-    // for each byte in the buffer, write it out to the serial port
-    for b in buffer {
-        match serial.write(&[*b]) {
-            Ok(_r) => (),
-            Err(e) => rprintln!("Serial Error: {:?}", e),
-        }
-    }    
-}
-
 #[cortex_m_rt::entry]
 fn start_here() -> ! {
 
@@ -63,11 +51,10 @@ fn start_here() -> ! {
     // let coretx_peripherals = cortex_m::Peripherals::take().unwrap();
     // let mut delay = Delay::new(coretx_peripherals.SYST);
 
-
     let p = Pins {
-        sck:  core::prelude::v1::Some(sck.degrade()),
-        mosi: core::prelude::v1::Some(mosi.degrade()),
-        miso: core::prelude::v1::Some(miso.degrade()),
+        sck:  Some(sck.degrade()),
+        mosi: Some(mosi.degrade()),
+        miso: Some(miso.degrade()),
     };
     
     let s = Spi::new(
@@ -87,13 +74,8 @@ fn start_here() -> ! {
         Baudrate::BAUD115200,
     );
 
-    // Clear terminal
-    serial_write(&mut serial, b"\x1Bc");
-
-
     let mut bme280 = BME280::new(spi_dev.unwrap()).unwrap();
     bme280.init(&mut bme_timer).unwrap();
-    
     
     loop {
         // measure temperature, pressure, and humidity
