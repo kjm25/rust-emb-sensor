@@ -1,12 +1,14 @@
 [package]
 name = "blinky"
 version = "0.1.0"
-edition = "2018"
+edition = "2024"
 
 [dependencies]
+bme280 = "0.5.1"
 cortex-m-rt = "0.7"
 embedded-alloc = "0.6.0"
 embedded-hal = "1.0.0"
+embedded-hal-bus = "0.3.0"
 embedded-hal-nb = "1.0.0"
 embedded-io = "0.6.1"
 microbit-v2 = "0.15.1"

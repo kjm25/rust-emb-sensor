@@ -1,5 +1,6 @@
 #![no_main]
 #![no_std]
+#![allow(warnings)]
 
 
 pub const RED: u8 = 0;
@@ -11,16 +12,21 @@ use rtt_target::{rtt_init_print, rprintln};
 use panic_rtt_target as _;                                                    
 
 use embedded_hal::{delay::DelayNs, digital::OutputPin};
-use embedded_hal::digital::PinState;
+use embedded_hal::digital::{ PinState, InputPin };
+
+use bme280::spi::BME280;
+
+
 use microbit::{
     board::Board,
-    // hal::gpio,
-    hal::gpio::Level,
-    hal::gpio::OpenDrainConfig,
+    gpio::{MOSI, MISO, SCK},
+    hal::gpio::{ Pin, Level, DriveConfig, OpenDrainConfig, Input, Output, PushPull, Floating, p0::P0_01, p0::P0_13, p0::P0_17},
     hal::timer::Timer,
-    // hal::spi,
     hal::uarte::{Uarte, Baudrate, Parity},
+    hal::spi::{Spi, Pins, Frequency},
+    hal::spim::{MODE_0, Polarity, Phase, Mode},
 };
+
 
 fn serial_write<T>(serial: &mut Uarte<T>, buffer: &[u8]) -> () where T: microbit::hal::uarte::Instance {
 
@@ -39,7 +45,26 @@ fn start_here() -> ! {
     rtt_init_print!();
     let mut board = Board::take().unwrap();
     let mut timer = Timer::new(board.TIMER0);
-   
+
+    let mut cs_pin = board.edge.e16.into_push_pull_output(Level::High);
+    // let mi: P0_13<Input<Floating>>;
+    // let s: P0_17<Output<PushPull>>;
+    // let mut miso   = mi.into_floating_input();
+    // let mut sck    = s.into_push_pull_output(Level::Low);
+
+    let p = Pins {
+        sck:  core::prelude::v1::Some(Pin::into_push_pull_output(Level::Low)),
+        mosi: core::prelude::v1::Some(Pin::into_push_pull_output(Level::Low)),
+        miso: core::prelude::v1::Some(Pin::into_floating_input()),
+    };
+    
+    let s = Spi::new(
+        board.SPI0, 
+        p,
+        Frequency::K250, 
+        Mode{ polarity: Polarity::IdleLow, phase: Phase::CaptureOnFirstTransition },  
+    );
+
     // Set up UARTE for microbit v2 using UartePort wrapper
     let mut serial = Uarte::new(
         board.UARTE0,
@@ -48,16 +73,6 @@ fn start_here() -> ! {
         Baudrate::BAUD115200,
     );
 
-    // SPI Initialization
-    // let mut mosi = microbit::gpio::MOSI; //.into_push_pull_input(Level::Low);
-    // let mut miso = gpio::miso.into_push_pull_input(Level::Low);
-    // let mut sck  = gpio::sck.into_push_pull_output(Level::Low);
-    // let mut cs   = board.edge.e16.into_push_pull_output(Level::High);
-
-    // let mut spi = spi::Spi::new(
-
-    // );
-   
     // Clear terminal
     serial_write(&mut serial, b"\x1Bc");
     
