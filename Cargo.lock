@@ -36,24 +36,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b8e56985ec62d17e9c1001dc89c88ecd7dc08e47eba5ec7c29c7b5eeecde967"
 
 [[package]]
-name = "blinky"
-version = "0.1.0"
-dependencies = [
- "bme280",
- "cortex-m",
- "cortex-m-rt",
- "embedded-alloc",
- "embedded-hal 1.0.0",
- "embedded-hal-bus",
- "embedded-hal-nb",
- "embedded-io",
- "microbit-v2",
- "nb 1.1.0",
- "panic-rtt-target",
- "rtt-target",
-]
-
-[[package]]
 name = "bme280"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -501,6 +483,24 @@ name = "semver-parser"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "388a1df253eca08550bef6c72392cfe7c30914bf41df5269b68cbd6ff8f570a3"
+
+[[package]]
+name = "sensor"
+version = "0.1.0"
+dependencies = [
+ "bme280",
+ "cortex-m",
+ "cortex-m-rt",
+ "embedded-alloc",
+ "embedded-hal 1.0.0",
+ "embedded-hal-bus",
+ "embedded-hal-nb",
+ "embedded-io",
+ "microbit-v2",
+ "nb 1.1.0",
+ "panic-rtt-target",
+ "rtt-target",
+]
 
 [[package]]
 name = "smallvec"
