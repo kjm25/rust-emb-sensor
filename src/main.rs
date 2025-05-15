@@ -77,7 +77,7 @@ fn start_here() -> ! {
         Mode{ polarity: Polarity::IdleLow, phase: Phase::CaptureOnFirstTransition },  
     );
 
-    let spi_dev = ExclusiveDevice::new(board.SPI0, cs_pin, spi_timer);
+    let spi_dev = ExclusiveDevice::new(s, cs_pin, spi_timer);
 
     // Set up UARTE for microbit v2 using UartePort wrapper
     let mut serial = Uarte::new(
